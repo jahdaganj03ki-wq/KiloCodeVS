@@ -14,12 +14,6 @@
     "url": "https://github.com/jahdaganj03ki-wq/KiloCodeVS.git",
     "directory": "packages/kilo-vscode"
   },
-  "publisher": "kilo-code-auto-memory",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jahdaganj03ki-wq/KiloCodeVS.git",
-    "directory": "packages/kilo-vscode"
-  },
   "engines": {
     "vscode": "^1.105.1"
   },
