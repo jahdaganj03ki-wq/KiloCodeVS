@@ -46,16 +46,13 @@ jobs:
         working-directory: monorepo
         run: bun install
 
+      - name: Build CLI binary
+        working-directory: monorepo/packages/kilo-vscode
+        run: bun script/local-bin.ts
+
       - name: Build extension (esbuild)
         working-directory: monorepo/packages/kilo-vscode
         run: node esbuild.js --production
-
-      - name: Create CLI placeholder for VSIX
-        working-directory: monorepo/packages/kilo-vscode
-        run: |
-          mkdir -p bin
-          echo '#!/bin/bash' > bin/kilo
-          chmod +x bin/kilo
 
       - name: Install vsce
         run: npm install -g @vscode/vsce

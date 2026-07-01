@@ -1,5 +1,5 @@
 {
-  "name": "kilo-code",
+  "name": "kilo-code-auto-memory",
   "displayName": "Kilo Code Auto Memory",
   "description": "AI coding agent fork with Puter.js provider, auto-skill system, and autonomous learning from failures. Downloads and injects relevant skills based on your prompts.",
   "version": "7.3.63",
@@ -8,7 +8,13 @@
     "color": "#FFFFFF",
     "theme": "light"
   },
-  "publisher": "kilocode",
+  "publisher": "kilo-code-auto-memory",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jahdaganj03ki-wq/KiloCodeVS.git",
+    "directory": "packages/kilo-vscode"
+  },
+  "publisher": "kilo-code-auto-memory",
   "repository": {
     "type": "git",
     "url": "https://github.com/jahdaganj03ki-wq/KiloCodeVS.git",
