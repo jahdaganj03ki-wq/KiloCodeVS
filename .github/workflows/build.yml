@@ -3,6 +3,7 @@ name: Build
 on:
   push:
     branches: ["*"]
+    tags: ["v*"]
   pull_request:
     branches: ["main"]
   workflow_dispatch:
@@ -66,3 +67,10 @@ jobs:
         with:
           name: kilo-code-vsix
           path: monorepo/packages/kilo-vscode/kilo-code.vsix
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: monorepo/packages/kilo-vscode/kilo-code.vsix
+          generate_release_notes: true
