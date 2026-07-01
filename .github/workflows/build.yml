@@ -1,0 +1,68 @@
+name: Build
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          path: fork
+
+      - name: Checkout upstream monorepo for workspace deps
+        uses: actions/checkout@v4
+        with:
+          repository: Kilo-Org/kilocode
+          path: monorepo
+          fetch-depth: 1
+
+      - name: Overlay fork on monorepo
+        run: |
+          rm -rf monorepo/packages/kilo-vscode
+          cp -r fork monorepo/packages/kilo-vscode
+          rm -rf monorepo/packages/kilo-vscode/.git
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: monorepo/package.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        working-directory: monorepo
+        run: bun install
+
+      - name: Build extension (esbuild)
+        working-directory: monorepo/packages/kilo-vscode
+        run: node esbuild.js --production
+
+      - name: Create CLI placeholder for VSIX
+        working-directory: monorepo/packages/kilo-vscode
+        run: |
+          mkdir -p bin
+          echo '#!/bin/bash' > bin/kilo
+          chmod +x bin/kilo
+
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+
+      - name: Package VSIX
+        working-directory: monorepo/packages/kilo-vscode
+        run: vsce package --no-dependencies --skip-license -o kilo-code.vsix
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kilo-code-vsix
+          path: monorepo/packages/kilo-vscode/kilo-code.vsix

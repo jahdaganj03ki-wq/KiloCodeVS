@@ -1,0 +1,11 @@
+node_modules/
+dist/
+out/
+bin/kilo
+bin/ffmpeg
+bin/tree-sitter/
+.webview-typecheck-cache/
+storybook-static/
+test-results/
+playwright-report/
+*.vsix
