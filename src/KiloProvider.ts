@@ -10,6 +10,7 @@ import type {
   FilePartInput,
   Config,
 } from "@kilocode/sdk/v2/client"
+import type { AutoSkillEngine } from "./skill-registry"
 import { type KiloConnectionService, ServerStartupError } from "./services/cli-backend"
 import { previewSound } from "./services/attention"
 import type { EditorContext, IndexingStatus } from "./services/cli-backend/types"
@@ -425,6 +426,7 @@ export class KiloProvider implements vscode.WebviewViewProvider, TelemetryProper
   private diffVirtualProvider: import("./DiffVirtualProvider").DiffVirtualProvider | undefined
   private remoteService: RemoteStatusService | null = null
   private unsubscribeRemote: (() => void) | null = null
+  private autoSkillEngine: AutoSkillEngine | null = null
   private readonly requirements: AgentRequirementsController
 
   constructor(
@@ -462,6 +464,10 @@ export class KiloProvider implements vscode.WebviewViewProvider, TelemetryProper
   setRemoteService(service: RemoteStatusService): void {
     this.remoteService = service
     this.unsubscribeRemote = service.onChange(() => this.sendRemoteStatus())
+  }
+
+  setAutoSkillEngine(engine: AutoSkillEngine): void {
+    this.autoSkillEngine = engine
   }
 
   setAutoApproveController(ctrl: Parameters<typeof createAutoApproveBridge>[0]): void {
@@ -3037,6 +3043,15 @@ export class KiloProvider implements vscode.WebviewViewProvider, TelemetryProper
         }
       }
       parts.push({ type: "text", text, metadata: review ? reviewMetadata(review) : undefined })
+
+      // Auto-skill injection: if the skill engine matches the prompt, prepend
+      // skill content as instruction context visible to the LLM.
+      if (this.autoSkillEngine) {
+        const skillBlock = await this.autoSkillEngine.onUserMessage(text)
+        if (skillBlock) {
+          parts.unshift({ type: "text", text: skillBlock })
+        }
+      }
 
       const sid = resolved!.sid
       const dir = resolved!.dir

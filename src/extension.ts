@@ -27,6 +27,7 @@ import { markWorkspace } from "./util/spotlight"
 import { createNotebookBridge } from "./services/notebook"
 import { startPuterProxy, stopPuterProxy, getStoredToken, getPuterSettings } from "./puter/puter-provider"
 import { LearningEngine } from "./learning/learning-engine"
+import { AutoSkillEngine } from "./skill-registry"
 import type { ProxyHandle } from "./puter/puter-proxy"
 
 let agentManager: AgentManagerProvider | undefined
@@ -220,6 +221,12 @@ export function activate(context: vscode.ExtensionContext) {
     },
   )
   context.subscriptions.push({ dispose: unsubLearning })
+
+  // Start the auto-skill engine (fetches registry indexes, matches prompts to skills)
+  const autoSkillEngine = new AutoSkillEngine(context)
+  void autoSkillEngine.initialize()
+  context.subscriptions.push({ dispose: () => void autoSkillEngine.dispose() })
+  provider.setAutoSkillEngine(autoSkillEngine)
 
   // Prewarm only after all global event consumers are ready.
   ensureBackendForAutocomplete(connectionService)

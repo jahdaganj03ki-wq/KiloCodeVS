@@ -1068,6 +1068,43 @@
           "type": "string",
           "default": "https://api.puter.com",
           "description": "Puter.js API base URL"
+        },
+        "kilo-code.new.skills.autoDownload": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-download skills from registries based on your prompts"
+        },
+        "kilo-code.new.skills.registries": {
+          "type": "array",
+          "default": [
+            "https://raw.githubusercontent.com/jahdaganj03ki-wq/kilo-skills/main/index.json"
+          ],
+          "description": "Skill registry URLs to fetch skill indexes from",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "kilo-code.new.skills.autoLoadThreshold": {
+          "type": "number",
+          "default": 0.3,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Minimum keyword match score (0-1) to trigger skill loading"
+        },
+        "kilo-code.new.skills.aiThreshold": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Scores below this threshold trigger AI confirmation (requires Puter.js enabled)"
+        },
+        "kilo-code.new.skills.maxSkillsPerMessage": {
+          "type": "integer",
+          "default": 2,
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Maximum number of skills to auto-load per message"
         }
       }
     }
